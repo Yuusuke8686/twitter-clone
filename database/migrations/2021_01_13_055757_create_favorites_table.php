@@ -15,7 +15,29 @@ class CreateFavoritesTable extends Migration
     {
         Schema::create('favorites', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
+            $table->unsignedInteger('user_id')->comment('ユーザーID');
+            $table->unsignedInteger('tweet_id')->comment('ツイートID');
+            
+            // インデックスを貼る
+            $table->index('id');
+            $table->index('user_id');
+            $table->index('tweet_id');
+
+            // ユニークキー
+            $table->unique(['user_id', 'tweet_id']);
+
+            // 外部キー制約
+            $table->foreign('user_id')
+                ->reference('id')
+                ->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->reign('tweet_id')
+                ->reference('id')
+                ->on('tweets')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
